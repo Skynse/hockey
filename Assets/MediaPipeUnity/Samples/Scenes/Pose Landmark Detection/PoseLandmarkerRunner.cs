@@ -13,6 +13,7 @@ namespace Mediapipe.Unity.Sample.PoseLandmarkDetection
 {
   public class PoseLandmarkerRunner : VisionTaskApiRunner<PoseLandmarker>
   {
+    [SerializeField] private GestureDetector gestureDetector;
     [SerializeField] private PoseLandmarkerResultAnnotationController _poseLandmarkerResultAnnotationController;
 
     private Experimental.TextureFramePool _textureFramePool;
@@ -134,6 +135,10 @@ namespace Mediapipe.Unity.Sample.PoseLandmarkDetection
             if (taskApi.TryDetect(image, imageProcessingOptions, ref result))
             {
               _poseLandmarkerResultAnnotationController.DrawNow(result);
+              if (gestureDetector != null)
+              {
+                gestureDetector.ProcessPoseResult(result);
+              }
             }
             else
             {
@@ -145,6 +150,10 @@ namespace Mediapipe.Unity.Sample.PoseLandmarkDetection
             if (taskApi.TryDetectForVideo(image, GetCurrentTimestampMillisec(), imageProcessingOptions, ref result))
             {
               _poseLandmarkerResultAnnotationController.DrawNow(result);
+              if (gestureDetector != null)
+              {
+                gestureDetector.ProcessPoseResult(result);
+              }
             }
             else
             {
@@ -154,6 +163,10 @@ namespace Mediapipe.Unity.Sample.PoseLandmarkDetection
             break;
           case Tasks.Vision.Core.RunningMode.LIVE_STREAM:
             taskApi.DetectAsync(image, GetCurrentTimestampMillisec(), imageProcessingOptions);
+            if (gestureDetector != null)
+            {
+              gestureDetector.ProcessPoseResult(result);
+            }
             break;
         }
       }

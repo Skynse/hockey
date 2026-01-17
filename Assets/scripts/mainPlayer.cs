@@ -12,9 +12,11 @@ public class mainPlayer : MonoBehaviour
     private Vector2 startSwingPos;
     private Vector2 endSwingPos;
     public LayerMask groundLayer;
+
+    private GameObject mainCamera;
     void Start()
     {
-
+        mainCamera = GetComponentInChildren<Camera>().gameObject;
     }
 
     // Update is called once per frame
@@ -68,6 +70,8 @@ public class mainPlayer : MonoBehaviour
                     Debug.LogError("Puck has no Rigidbody!");
                     return;
                 }
+
+                CameraShake.Shake(0.25f, worldForce.magnitude * 0.01f);
                 // Apply force in the direction of the swing
                 Debug.Log($"Applying Force: {worldForce}");
                 puckRb.AddForce(worldForce, ForceMode.Impulse);
