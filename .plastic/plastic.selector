@@ -1,0 +1,3 @@
+repository "Hockey 2025-12-26_20-03-20/Hockey@2473986569083@cloud"
+  path "/"
+    smartbranch "/main"
