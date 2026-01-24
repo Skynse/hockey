@@ -13,15 +13,71 @@ public class mainPlayer : MonoBehaviour
     private Vector2 endSwingPos;
     public LayerMask groundLayer;
 
+    [Header("Pose Movement Settings")]
+    [SerializeField] private PoseController poseController;
+    [SerializeField] private float moveSpeed = 5f;
+    private Vector2 currentMoveInput;
+
+    [Header("Head Bob")]
+    [SerializeField] private float bobFrequency = 8f;
+    [SerializeField] private float bobAmplitude = 0.05f;
+    private float bobTimer = 0f;
+    private float defaultCameraY;
+
     private GameObject mainCamera;
     void Start()
     {
         mainCamera = GetComponentInChildren<Camera>().gameObject;
+        defaultCameraY = mainCamera.transform.localPosition.y;
+
+        if (poseController != null)
+        {
+            poseController.OnMovementDetected += HandleMovement;
+        }
+        else
+        {
+            Debug.LogWarning("PoseController not assigned to mainPlayer. Head tracking disabled.");
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (poseController != null)
+        {
+            poseController.OnMovementDetected -= HandleMovement;
+        }
+    }
+
+    private void HandleMovement(Vector2 movement)
+    {
+        currentMoveInput = movement;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Apply head tracking movement
+        bool isMoving = currentMoveInput != Vector2.zero;
+        if (isMoving)
+        {
+            Vector3 movement = new Vector3(currentMoveInput.x, 0, currentMoveInput.y) * moveSpeed * Time.deltaTime;
+            transform.position += movement;
+
+            // Head bob while moving
+            bobTimer += Time.deltaTime * bobFrequency;
+            float bobOffset = Mathf.Sin(bobTimer) * bobAmplitude;
+            Vector3 camPos = mainCamera.transform.localPosition;
+            camPos.y = defaultCameraY + bobOffset;
+            mainCamera.transform.localPosition = camPos;
+        }
+        else
+        {
+            // Reset head bob when not moving
+            bobTimer = 0f;
+            Vector3 camPos = mainCamera.transform.localPosition;
+            camPos.y = Mathf.Lerp(camPos.y, defaultCameraY, Time.deltaTime * 10f);
+            mainCamera.transform.localPosition = camPos;
+        }
 
         Vector2 startSwingScreenPos = new Vector2();
         Vector2 endSwingScreenPos = new Vector2();

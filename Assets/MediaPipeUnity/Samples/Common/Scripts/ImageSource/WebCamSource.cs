@@ -242,6 +242,7 @@ namespace Mediapipe.Unity
       if (webCamDevice is WebCamDevice valueOfWebCamDevice)
       {
         webCamTexture = new WebCamTexture(valueOfWebCamDevice.name, resolution.width, resolution.height, (int)resolution.frameRate);
+        // webCamTexture = new WebCamTexture(valueOfWebCamDevice.name);
         return;
       }
       throw new InvalidOperationException("Cannot initialize WebCamTexture because WebCamDevice is not selected");

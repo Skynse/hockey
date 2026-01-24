@@ -163,10 +163,6 @@ namespace Mediapipe.Unity.Sample.PoseLandmarkDetection
             break;
           case Tasks.Vision.Core.RunningMode.LIVE_STREAM:
             taskApi.DetectAsync(image, GetCurrentTimestampMillisec(), imageProcessingOptions);
-            if (gestureDetector != null)
-            {
-              gestureDetector.ProcessPoseResult(result);
-            }
             break;
         }
       }
@@ -175,6 +171,10 @@ namespace Mediapipe.Unity.Sample.PoseLandmarkDetection
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Image image, long timestamp)
     {
       _poseLandmarkerResultAnnotationController.DrawLater(result);
+      if (gestureDetector != null)
+      {
+        gestureDetector.ProcessPoseResult(result);
+      }
       DisposeAllMasks(result);
     }
 
