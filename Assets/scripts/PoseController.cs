@@ -14,10 +14,11 @@ public class PoseController : MonoBehaviour
     [SerializeField] private float minTrackingConfidence = 0.5f;
 
     [Header("Movement Settings")]
-    [SerializeField] private float movementSensitivity = 1.5f;
-    [SerializeField] private float forwardBackDeadzone = 15f; // degrees - bigger = more neutral zone
-    [SerializeField] private float leftRightDeadzone = 12f; // degrees - bigger = more neutral zone
-    [SerializeField] private float maxLeanAngle = 30f; // angle for max speed
+    [SerializeField] private float movementSensitivity = 3.5f;
+    [SerializeField] private float forwardBackDeadzone = 3f; // degrees - bigger = more neutral zone
+    [SerializeField] private float leftRightDeadzone = 3f; // degrees - bigger = more neutral zone
+    [SerializeField] private float maxLeanAngle = 20f; // angle for max speed
+    [SerializeField] private float pitchSensitivity = 300f; // Multiplier for nose-to-shoulder distance
 
     [Header("Swing Detection")]
     [SerializeField] private float swingSpeedThreshold = 0.5f;
@@ -57,11 +58,19 @@ public class PoseController : MonoBehaviour
 
     // Smoothing
     private Vector2 _smoothedInput = Vector2.zero;
-    [SerializeField] private float inputSmoothing = 0.15f;
+    [SerializeField] private float inputSmoothing = 0.5f; // Higher = more responsive (0-1)
 
     // Public accessors
     public bool IsRunning => _isRunning;
     public WebCamTexture WebCamTexture => _webCamTexture;
+
+    // Public methods
+    public void Recalibrate()
+    {
+        _isCalibrated = false;
+        _smoothedInput = Vector2.zero;
+        Debug.Log("PoseController: Recalibration requested. Move to neutral position.");
+    }
 
     private IEnumerator Start()
     {
@@ -289,14 +298,17 @@ public class PoseController : MonoBehaviour
         float tiltDelta = tiltAngle - _calibratedTiltAngle;
         while (tiltDelta > 180f) tiltDelta -= 360f;
         while (tiltDelta < -180f) tiltDelta += 360f;
-        float pitchDelta = (noseToShoulderY - _calibratedNoseToShoulderY) * 100f; // scale up for deadzone comparison
+        float pitchDelta = (noseToShoulderY - _calibratedNoseToShoulderY) * pitchSensitivity;
+
+        // Apply deadzone and calculate left/right speed
         float moveX = 0f;
         if (Mathf.Abs(tiltDelta) > leftRightDeadzone)
         {
             float adjustedAngle = Mathf.Abs(tiltDelta) - leftRightDeadzone;
-            float speed = Mathf.Clamp01(adjustedAngle / maxLeanAngle) * movementSensitivity;
+            float normalizedAngle = Mathf.Clamp01(adjustedAngle / maxLeanAngle);
+            // Use power curve for better control at small angles
+            float speed = Mathf.Pow(normalizedAngle, 1.2f) * movementSensitivity;
             moveX = Mathf.Sign(tiltDelta) * speed;
-
         }
 
         // Apply deadzone and calculate forward/back speed
@@ -304,7 +316,9 @@ public class PoseController : MonoBehaviour
         if (Mathf.Abs(pitchDelta) > forwardBackDeadzone)
         {
             float adjustedDelta = Mathf.Abs(pitchDelta) - forwardBackDeadzone;
-            float speed = Mathf.Clamp01(adjustedDelta / maxLeanAngle) * movementSensitivity;
+            float normalizedDelta = Mathf.Clamp01(adjustedDelta / maxLeanAngle);
+            // Use power curve for better control
+            float speed = Mathf.Pow(normalizedDelta, 1.2f) * movementSensitivity;
             moveY = Mathf.Sign(pitchDelta) * speed;
         }
 
