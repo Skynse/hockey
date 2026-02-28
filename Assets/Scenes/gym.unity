@@ -198,37 +198,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &40762637
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 40762638}
-  m_Layer: 0
-  m_Name: left_goalpost
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &40762638
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 40762637}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.19, y: 1.40719, z: 32.51}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &203844586
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,37 +325,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 604712594}
   m_LocalEulerAnglesHint: {x: 130.446, y: -30, z: 0}
---- !u!1 &215077677
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 215077678}
-  m_Layer: 0
-  m_Name: right_goalpost
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &215077678
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 215077677}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.97, y: 1.40719, z: 32.51}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &322091146
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,20 +351,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 322091146}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67e4036d668d42b4abf4721259596f78, type: 3}
+  m_Script: {fileID: 11500000, guid: a7383c1a76604606a08c5b7a498053b5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WorldScript
+  m_EditorClassIdentifier: Assembly-CSharp::HockeyDefenseArea
+  defensiveAgent: {fileID: 742340850}
+  puckRigidbody: {fileID: 714527378}
+  goalieSpawn: {fileID: 0}
+  puckSpawnCenter: {fileID: 0}
+  goalCenter: {fileID: 0}
+  episodeTimeoutSeconds: 6
+  disableWorldScriptInGym: 1
+  worldScript: {fileID: 0}
   goalLineZ: 32.5
   goalLeftX: -3.64
   goalRightX: 3.8
-  puck: {fileID: 714527373}
-  player: {fileID: 603134260}
-  opponent: {fileID: 742340845}
-  puckResetPosition: {x: 0, y: 0.5, z: 0}
-  playerResetPosition: {x: 0, y: 0, z: -10}
-  opponentResetPosition: {x: 0, y: 0, z: 25}
-  scoreText: {fileID: 463057503}
-  resetDelay: 2
+  puckSpawnXRange: {x: -6, y: 6}
+  puckSpawnZRange: {x: 5, y: 17}
+  shotSpeedRange: {x: 11, y: 24}
+  targetPostPadding: 0.35
+  maxInitialVerticalVelocity: 0.75
+  maxAngularVelocity: 4
+  goalieSpawnFallback: {x: 0, y: 0, z: 25}
 --- !u!4 &322091148
 Transform:
   m_ObjectHideFlags: 0
@@ -447,36 +392,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 523a1a4c90243c24bb04511e3928196f, type: 3}
   m_PrefabInstance: {fileID: 678770265}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &450737316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450737315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7383c1a76604606a08c5b7a498053b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HockeyDefenseArea
-  defensiveAgent: {fileID: 742340851}
-  puckRigidbody: {fileID: 714527378}
-  goalieSpawn: {fileID: 678770267}
-  puckSpawnCenter: {fileID: 714527377}
-  goalCenter: {fileID: 678770267}
-  episodeTimeoutSeconds: 6
-  disableWorldScriptInGym: 1
-  worldScript: {fileID: 322091147}
-  goalLineZ: 32.5
-  goalLeftX: -3.64
-  goalRightX: 3.8
-  puckSpawnXRange: {x: -6, y: 6}
-  puckSpawnZRange: {x: 5, y: 17}
-  shotSpeedRange: {x: 11, y: 24}
-  targetPostPadding: 0.35
-  maxInitialVerticalVelocity: 0.75
-  maxAngularVelocity: 4
-  goalieSpawnFallback: {x: 0, y: 0, z: 25}
 --- !u!1 &463057501
 GameObject:
   m_ObjectHideFlags: 0
@@ -613,7 +528,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 463057501}
   m_CullTransparentMesh: 1
---- !u!1 &509759726
+--- !u!1 &489469979
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -621,24 +536,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 509759727}
+  - component: {fileID: 489469980}
   m_Layer: 0
-  m_Name: goal_center
+  m_Name: right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &509759727
+--- !u!4 &489469980
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 509759726}
+  m_GameObject: {fileID: 489469979}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.12, y: 1.88, z: 30.86}
+  m_LocalPosition: {x: -3.7, y: 1.73, z: 32.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -917,12 +832,9 @@ PrefabInstance:
     - {fileID: 65702495048144492, guid: 523a1a4c90243c24bb04511e3928196f, type: 3}
     - {fileID: -8700617353114198275, guid: 523a1a4c90243c24bb04511e3928196f, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 523a1a4c90243c24bb04511e3928196f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 450737316}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 523a1a4c90243c24bb04511e3928196f, type: 3}
---- !u!4 &678770267 stripped
+--- !u!4 &678770266 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4083501151425157549, guid: 523a1a4c90243c24bb04511e3928196f, type: 3}
   m_PrefabInstance: {fileID: 678770265}
@@ -942,7 +854,7 @@ GameObject:
   - component: {fileID: 714527379}
   m_Layer: 0
   m_Name: puck
-  m_TagString: Puck
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1078,7 +990,7 @@ GameObject:
   - component: {fileID: 742340848}
   - component: {fileID: 742340847}
   - component: {fileID: 742340846}
-  - component: {fileID: 742340852}
+  - component: {fileID: 742340850}
   - component: {fileID: 742340851}
   m_Layer: 0
   m_Name: Opponent
@@ -1173,13 +1085,13 @@ Transform:
   m_GameObject: {fileID: 742340845}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.26, y: 1.83, z: 30.46}
+  m_LocalPosition: {x: -4.88, y: 1.83, z: 30.64}
   m_LocalScale: {x: 1, y: 3.2839, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &742340851
+--- !u!114 &742340850
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1195,11 +1107,11 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  trainingArea: {fileID: 450737316}
+  trainingArea: {fileID: 322091147}
   puckRigidbody: {fileID: 714527378}
-  goalCenter: {fileID: 509759727}
-  leftGoalPost: {fileID: 40762638}
-  rightGoalPost: {fileID: 215077678}
+  goalCenter: {fileID: 678770266}
+  leftGoalPost: {fileID: 1312616326}
+  rightGoalPost: {fileID: 489469980}
   maxMoveSpeed: 7.5
   maxRotationSpeed: 240
   clampToCrease: 1
@@ -1233,7 +1145,7 @@ MonoBehaviour:
   autoConfigureBehaviorParameters: 1
   behaviorName: HockeyDefense
   decisionPeriod: 5
---- !u!114 &742340852
+--- !u!114 &742340851
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1256,7 +1168,7 @@ MonoBehaviour:
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
-  m_InferenceDevice: 1
+  m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: My Behavior
   TeamId: 0
@@ -1778,6 +1690,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1312616325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1312616326}
+  m_Layer: 0
+  m_Name: left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1312616326
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312616325}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.93, y: 2.03, z: 32.68}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1586083643
 GameObject:
   m_ObjectHideFlags: 0
@@ -2132,6 +2075,5 @@ SceneRoots:
   - {fileID: 322091148}
   - {fileID: 1153973078}
   - {fileID: 22674328}
-  - {fileID: 40762638}
-  - {fileID: 215077678}
-  - {fileID: 509759727}
+  - {fileID: 1312616326}
+  - {fileID: 489469980}

@@ -1,0 +1,4 @@
+mlagents==1.1.0
+mlagents_envs==1.1.0
+onnx==1.15.0
+protobuf==3.20.3

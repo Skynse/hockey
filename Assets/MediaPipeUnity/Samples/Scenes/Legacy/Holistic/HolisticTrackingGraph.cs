@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-using Google.Protobuf;
 using System.Threading.Tasks;
 
 namespace Mediapipe.Unity.Sample.Holistic
@@ -269,8 +268,7 @@ namespace Mediapipe.Unity.Sample.Holistic
       {
         validatedGraphConfig.Initialize(config);
 
-        var extensionRegistry = new ExtensionRegistry() { TensorsToDetectionsCalculatorOptions.Extensions.Ext, ThresholdingCalculatorOptions.Extensions.Ext };
-        var cannonicalizedConfig = validatedGraphConfig.Config(extensionRegistry);
+        var cannonicalizedConfig = ConfigWithExtensions(validatedGraphConfig);
 
         var poseDetectionCalculatorPattern = new Regex("__posedetection[a-z]+__TensorsToDetectionsCalculator$");
         var tensorsToDetectionsCalculators = cannonicalizedConfig.Node.Where((node) => poseDetectionCalculatorPattern.Match(node.Name).Success).ToList();
@@ -299,6 +297,33 @@ namespace Mediapipe.Unity.Sample.Holistic
         }
         calculatorGraph.Initialize(cannonicalizedConfig);
       }
+    }
+
+    private static CalculatorGraphConfig ConfigWithExtensions(ValidatedGraphConfig validatedGraphConfig)
+    {
+      var registryType = Type.GetType("Google.Protobuf.ExtensionRegistry, Google.Protobuf");
+      if (registryType == null)
+      {
+        return validatedGraphConfig.Config();
+      }
+
+      var configMethod = typeof(ValidatedGraphConfig).GetMethod(nameof(ValidatedGraphConfig.Config), new[] { registryType });
+      var addMethod = registryType.GetMethod("Add");
+      if (configMethod == null || addMethod == null)
+      {
+        return validatedGraphConfig.Config();
+      }
+
+      var extensionRegistry = Activator.CreateInstance(registryType);
+      if (extensionRegistry == null)
+      {
+        return validatedGraphConfig.Config();
+      }
+
+      addMethod.Invoke(extensionRegistry, new object[] { TensorsToDetectionsCalculatorOptions.Extensions.Ext });
+      addMethod.Invoke(extensionRegistry, new object[] { ThresholdingCalculatorOptions.Extensions.Ext });
+
+      return (CalculatorGraphConfig)configMethod.Invoke(validatedGraphConfig, new[] { extensionRegistry });
     }
 
     private PacketMap BuildSidePacket(ImageSource imageSource)

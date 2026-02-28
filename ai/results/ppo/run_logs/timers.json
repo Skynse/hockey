@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1771636649",
+        "python_version": "3.10.12 (main, Feb 20 2026, 19:05:21) [GCC 13.3.0]",
+        "command_line_arguments": "/home/whobitmyneck/.pyenv/versions/3.10.12/bin/mlagents-learn",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.10.0+cu128",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1771636699"
+    },
+    "total": 50.34920076399999,
+    "count": 1,
+    "self": 0.01013903099988056,
+    "children": {
+        "run_training.setup": {
+            "total": 0.026142889000084324,
+            "count": 1,
+            "self": 0.026142889000084324
+        },
+        "TrainerController.start_learning": {
+            "total": 50.31291884400002,
+            "count": 1,
+            "self": 0.0022987380000358826,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 50.310606706000044,
+                    "count": 1,
+                    "self": 50.310606706000044
+                },
+                "trainer_threads": {
+                    "total": 1.0789999578264542e-06,
+                    "count": 1,
+                    "self": 1.0789999578264542e-06
+                },
+                "TrainerController._save_models": {
+                    "total": 1.232099998560443e-05,
+                    "count": 1,
+                    "self": 1.232099998560443e-05
+                }
+            }
+        }
+    }
+}
