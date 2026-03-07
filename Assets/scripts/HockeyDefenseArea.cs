@@ -30,7 +30,17 @@ public class HockeyDefenseArea : MonoBehaviour
     [Header("Goalie Spawn Fallback")]
     [SerializeField] private Vector3 goalieSpawnFallback = new Vector3(0f, 0f, 25f);
 
+    [Header("Puck Ground Physics")]
+    [SerializeField] private bool configurePuckGroundPhysics = true;
+    [SerializeField] private float puckFriction = 0.01f;
+    [SerializeField] private float puckLinearDamping = 0.02f;
+    [SerializeField] private float puckAngularDamping = 0.15f;
+    [SerializeField] private bool freezeVerticalMotion = true;
+    [SerializeField] private bool freezeTilt = true;
+    [SerializeField] private float puckGroundY = 0.5f;
+
     private float _episodeTimer;
+    private PhysicsMaterial _runtimeIceMaterial;
 
     private void Awake()
     {
@@ -57,6 +67,8 @@ public class HockeyDefenseArea : MonoBehaviour
             }
         }
 
+        ConfigurePuckGroundPhysics();
+
         if (disableWorldScriptInGym)
         {
             if (worldScript == null)
@@ -78,6 +90,7 @@ public class HockeyDefenseArea : MonoBehaviour
             return;
         }
 
+        EnforcePuckGroundPlane();
         _episodeTimer += Time.fixedDeltaTime;
 
         if (IsGoalConceded())
@@ -145,7 +158,9 @@ public class HockeyDefenseArea : MonoBehaviour
 
         Vector3 shotDir = (targetPos - spawnPos).normalized;
         float shotSpeed = Random.Range(shotSpeedRange.x, shotSpeedRange.y);
-        float verticalNoise = Random.Range(-maxInitialVerticalVelocity, maxInitialVerticalVelocity);
+        float verticalNoise = freezeVerticalMotion
+            ? 0f
+            : Random.Range(-maxInitialVerticalVelocity, maxInitialVerticalVelocity);
 
         Vector3 launchVelocity = shotDir * shotSpeed;
         launchVelocity.y += verticalNoise;
@@ -159,5 +174,73 @@ public class HockeyDefenseArea : MonoBehaviour
         bool crossedGoalLine = puckPos.z >= goalLineZ;
         bool inPostBounds = puckPos.x >= goalLeftX && puckPos.x <= goalRightX;
         return crossedGoalLine && inPostBounds;
+    }
+
+    private void ConfigurePuckGroundPhysics()
+    {
+        if (!configurePuckGroundPhysics || puckRigidbody == null)
+        {
+            return;
+        }
+
+        puckRigidbody.linearDamping = puckLinearDamping;
+        puckRigidbody.angularDamping = puckAngularDamping;
+
+        RigidbodyConstraints constraints = puckRigidbody.constraints;
+        if (freezeVerticalMotion)
+        {
+            constraints |= RigidbodyConstraints.FreezePositionY;
+        }
+
+        if (freezeTilt)
+        {
+            constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        puckRigidbody.constraints = constraints;
+        _runtimeIceMaterial = CreateOrUpdateIceMaterial(_runtimeIceMaterial, puckFriction);
+
+        foreach (Collider collider in puckRigidbody.GetComponentsInChildren<Collider>())
+        {
+            collider.sharedMaterial = _runtimeIceMaterial;
+        }
+    }
+
+    private void EnforcePuckGroundPlane()
+    {
+        if (!configurePuckGroundPhysics || !freezeVerticalMotion || puckRigidbody == null)
+        {
+            return;
+        }
+
+        Vector3 velocity = puckRigidbody.linearVelocity;
+        if (Mathf.Abs(velocity.y) > 0.001f)
+        {
+            velocity.y = 0f;
+            puckRigidbody.linearVelocity = velocity;
+        }
+
+        Vector3 position = puckRigidbody.position;
+        if (Mathf.Abs(position.y - puckGroundY) > 0.001f)
+        {
+            position.y = puckGroundY;
+            puckRigidbody.position = position;
+        }
+    }
+
+    private static PhysicsMaterial CreateOrUpdateIceMaterial(PhysicsMaterial material, float friction)
+    {
+        if (material == null)
+        {
+            material = new PhysicsMaterial("Runtime_Ice");
+        }
+
+        float clampedFriction = Mathf.Max(0f, friction);
+        material.staticFriction = clampedFriction;
+        material.dynamicFriction = clampedFriction;
+        material.frictionCombine = PhysicsMaterialCombine.Minimum;
+        material.bounciness = 0f;
+        material.bounceCombine = PhysicsMaterialCombine.Minimum;
+        return material;
     }
 }

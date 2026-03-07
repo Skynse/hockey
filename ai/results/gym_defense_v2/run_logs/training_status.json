@@ -1,0 +1,47 @@
+{
+    "HockeyDefense": {
+        "checkpoints": [
+            {
+                "steps": 8371,
+                "file_path": "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-8371.onnx",
+                "reward": -5.172486001022265,
+                "creation_time": 1772240998.691262,
+                "auxillary_file_paths": [
+                    "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-8371.pt"
+                ]
+            },
+            {
+                "steps": 8371,
+                "file_path": "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-8371.onnx",
+                "reward": null,
+                "creation_time": 1772242410.41829,
+                "auxillary_file_paths": [
+                    "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-8371.pt"
+                ]
+            },
+            {
+                "steps": 16552,
+                "file_path": "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-16552.onnx",
+                "reward": -2.4156583695831695,
+                "creation_time": 1772243663.2109582,
+                "auxillary_file_paths": [
+                    "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-16552.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 16552,
+            "file_path": "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense.onnx",
+            "reward": -2.4156583695831695,
+            "creation_time": 1772243663.2109582,
+            "auxillary_file_paths": [
+                "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v2/HockeyDefense/HockeyDefense-16552.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.10.0+cu128"
+    }
+}

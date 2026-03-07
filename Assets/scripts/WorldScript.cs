@@ -18,13 +18,26 @@ public class WorldScript : MonoBehaviour
     [SerializeField] private Vector3 playerResetPosition = new Vector3(0, 0, -10);
     [SerializeField] private Vector3 opponentResetPosition = new Vector3(0, 0, 25);
 
+    [Header("Out of Bounds Settings")]
+    [SerializeField] private float puckOutOfBoundsRadius = 25f; // Distance from center before reset
+
     [Header("Score Settings")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private float resetDelay = 2f; // Delay before resetting after goal
 
+    [Header("Puck Ground Physics")]
+    [SerializeField] private bool configurePuckGroundPhysics = true;
+    [SerializeField] private float puckFriction = 0.01f;
+    [SerializeField] private float puckLinearDamping = 0.02f;
+    [SerializeField] private float puckAngularDamping = 0.15f;
+    [SerializeField] private bool freezeVerticalMotion = true;
+    [SerializeField] private bool freezeTilt = true;
+    [SerializeField] private float puckGroundY = 0.5f;
+
     private int playerScore = 0;
     private bool goalScored = false;
     private Rigidbody puckRigidbody;
+    private PhysicsMaterial runtimeIceMaterial;
 
     void Start()
     {
@@ -41,6 +54,7 @@ public class WorldScript : MonoBehaviour
         if (puck != null)
         {
             puckRigidbody = puck.GetComponent<Rigidbody>();
+            ConfigurePuckGroundPhysics();
         }
 
         // Auto-find player if not assigned
@@ -57,6 +71,11 @@ public class WorldScript : MonoBehaviour
         UpdateScoreDisplay();
     }
 
+    void FixedUpdate()
+    {
+        EnforcePuckGroundPlane();
+    }
+
     void Update()
     {
         if (puck == null || goalScored) return;
@@ -65,6 +84,15 @@ public class WorldScript : MonoBehaviour
         if (puck.transform.position.z >= goalLineZ)
         {
             CheckForGoal();
+            return;
+        }
+
+        // Check if puck has left the play area
+        Vector3 puckFlat = new Vector3(puck.transform.position.x, 0, puck.transform.position.z);
+        if (puckFlat.magnitude > puckOutOfBoundsRadius)
+        {
+            Debug.Log("Puck out of bounds! Resetting.");
+            ResetState(false);
         }
     }
 
@@ -135,6 +163,7 @@ public class WorldScript : MonoBehaviour
             {
                 puckRigidbody.linearVelocity = Vector3.zero;
                 puckRigidbody.angularVelocity = Vector3.zero;
+                EnforcePuckGroundPlane();
             }
         }
 
@@ -173,6 +202,74 @@ public class WorldScript : MonoBehaviour
     public int GetScore()
     {
         return playerScore;
+    }
+
+    private void ConfigurePuckGroundPhysics()
+    {
+        if (!configurePuckGroundPhysics || puckRigidbody == null)
+        {
+            return;
+        }
+
+        puckRigidbody.linearDamping = puckLinearDamping;
+        puckRigidbody.angularDamping = puckAngularDamping;
+
+        RigidbodyConstraints constraints = puckRigidbody.constraints;
+        if (freezeVerticalMotion)
+        {
+            constraints |= RigidbodyConstraints.FreezePositionY;
+        }
+
+        if (freezeTilt)
+        {
+            constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        puckRigidbody.constraints = constraints;
+        runtimeIceMaterial = CreateOrUpdateIceMaterial(runtimeIceMaterial, puckFriction);
+
+        foreach (Collider collider in puckRigidbody.GetComponentsInChildren<Collider>())
+        {
+            collider.sharedMaterial = runtimeIceMaterial;
+        }
+    }
+
+    private void EnforcePuckGroundPlane()
+    {
+        if (!configurePuckGroundPhysics || !freezeVerticalMotion || puckRigidbody == null)
+        {
+            return;
+        }
+
+        Vector3 velocity = puckRigidbody.linearVelocity;
+        if (Mathf.Abs(velocity.y) > 0.001f)
+        {
+            velocity.y = 0f;
+            puckRigidbody.linearVelocity = velocity;
+        }
+
+        Vector3 position = puckRigidbody.position;
+        if (Mathf.Abs(position.y - puckGroundY) > 0.001f)
+        {
+            position.y = puckGroundY;
+            puckRigidbody.position = position;
+        }
+    }
+
+    private static PhysicsMaterial CreateOrUpdateIceMaterial(PhysicsMaterial material, float friction)
+    {
+        if (material == null)
+        {
+            material = new PhysicsMaterial("Runtime_Ice");
+        }
+
+        float clampedFriction = Mathf.Max(0f, friction);
+        material.staticFriction = clampedFriction;
+        material.dynamicFriction = clampedFriction;
+        material.frictionCombine = PhysicsMaterialCombine.Minimum;
+        material.bounciness = 0f;
+        material.bounceCombine = PhysicsMaterialCombine.Minimum;
+        return material;
     }
 
     // Visualize goal line and net bounds in editor

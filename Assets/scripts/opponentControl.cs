@@ -24,8 +24,18 @@ public class opponentControl : MonoBehaviour
     [SerializeField] private float reactionSpeed = 8f;
     [SerializeField] private float anticipationDistance = 3f; // How far ahead to position
 
+    [Header("Puck Hitting")]
+    [SerializeField] private float hitRange = 2f;
+    [SerializeField] private float hitForce = 150f;
+    [SerializeField] private float hitCooldown = 1.5f;
+    private float lastHitTime = -999f;
+
+    [Header("Animation")]
+    [SerializeField] private animation animationController;
+
     private Vector3 targetPosition;
     private Vector3 goalBasePosition;
+    private Vector3 lastPosition;
     private Ray[] visionRays;
 
     void Start()
@@ -40,14 +50,19 @@ public class opponentControl : MonoBehaviour
         // Pre-allocate vision rays array for performance
         visionRays = new Ray[visionRayCount];
         targetPosition = transform.position;
+        lastPosition = transform.position;
+
+        // Auto-find animation controller on child if not assigned
+        if (animationController == null)
+            animationController = GetComponentInChildren<animation>();
     }
 
     void Update()
     {
         if (goal_cube == null) return;
 
-        // Determine what to track (puck is priority if it exists)
-        GameObject trackTarget = (puck != null) ? puck : player;
+        // Only track the puck — player following handled by agents later
+        GameObject trackTarget = puck;
         if (trackTarget == null) return;
 
         // Calculate optimal defensive position
@@ -59,6 +74,15 @@ public class opponentControl : MonoBehaviour
 
         // Move to target position if within allowed radius
         MoveToTargetPosition();
+
+        // Try to hit the puck if in range
+        TryHitPuck();
+
+        // Update animations
+        bool isMoving = Vector3.Distance(transform.position, lastPosition) > 0.001f;
+        lastPosition = transform.position;
+        if (animationController != null)
+            animationController.SetStrafing(isMoving);
 
         // Optional: Draw debug rays to visualize vision
         if (Application.isEditor)
@@ -140,6 +164,29 @@ public class opponentControl : MonoBehaviour
                 moveSpeed * Time.deltaTime
             );
         }
+    }
+
+    private void TryHitPuck()
+    {
+        if (puck == null) return;
+        if (Time.time - lastHitTime < hitCooldown) return;
+
+        float distanceToPuck = Vector3.Distance(transform.position, puck.transform.position);
+        if (distanceToPuck > hitRange) return;
+
+        Rigidbody puckRb = puck.GetComponent<Rigidbody>();
+        if (puckRb == null) return;
+
+        // Hit puck away from our own goal (toward player's side)
+        Vector3 hitDirection = (puck.transform.position - goal_cube.transform.position).normalized;
+        hitDirection.y = 0;
+        puckRb.AddForce(hitDirection * hitForce, ForceMode.Impulse);
+        lastHitTime = Time.time;
+
+        if (animationController != null)
+            animationController.PlaySwing();
+
+        Debug.Log("Opponent hit the puck!");
     }
 
     private bool CanSeeTarget(GameObject target)

@@ -3,5 +3,27 @@
         "stats_format_version": "0.3.0",
         "mlagents_version": "1.1.0",
         "torch_version": "2.10.0+cu128"
+    },
+    "HockeyDefense": {
+        "checkpoints": [
+            {
+                "steps": 9128,
+                "file_path": "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v1/HockeyDefense/HockeyDefense-9128.onnx",
+                "reward": -2.4225000033729542,
+                "creation_time": 1772241922.3336115,
+                "auxillary_file_paths": [
+                    "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v1/HockeyDefense/HockeyDefense-9128.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 9128,
+            "file_path": "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v1/HockeyDefense.onnx",
+            "reward": -2.4225000033729542,
+            "creation_time": 1772241922.3336115,
+            "auxillary_file_paths": [
+                "/mnt/c/Users/austi.DESKTOP-QRQEJQ5/projects/Hockey/Hockey/ai/results/gym_defense_v1/HockeyDefense/HockeyDefense-9128.pt"
+            ]
+        }
     }
 }
